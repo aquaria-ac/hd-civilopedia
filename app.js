@@ -84,10 +84,41 @@ function searchableText(p){
 }
 const titleIndex=new Map(D.pages.map(p=>[p.id,readable(p.name).toLowerCase().trim()]));
 const searchIndex=new Map(D.pages.map(p=>[p.id,searchableText(p)]));
+// Title transliterations are prebuilt; searching works without a network or runtime dictionary.
+const titlePinyinIndex=new Map(D.pages.map(p=>{
+ const syllables=D.pinyin?.titles?.[p.id]||[],full=syllables.join(''),initials=syllables.map(s=>s[0]).join('');
+ let offset=0;const starts=syllables.map(s=>{const start=offset;offset+=s.length;return start;});
+ return [p.id,{full,initials,starts}];
+}));
+function pinyinQuery(query){
+ const normalized=query.normalize('NFKC').toLowerCase().replace(/u:/g,'v').replace(/[üǖǘǚǜ]/g,'v').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s'’\-]/g,'');
+ return /^[a-z0-9]+$/.test(normalized)&&/[a-z]/.test(normalized)?normalized:'';
+}
+function pinyinRank(p,query){
+ const q=pinyinQuery(query),name=titlePinyinIndex.get(p.id);if(!q||!name?.full)return 0;
+ if(name.full===q)return 80;
+ if(name.full.startsWith(q))return 70;
+ if(name.initials===q)return 65;
+ if(name.initials.startsWith(q))return 60;
+ if(name.starts.some(start=>name.full.startsWith(q,start)))return 40;
+ if(name.initials.includes(q))return 30;
+ return 0;
+}
+function matchesSearch(p,terms,titleOnly=false){
+ const text=(titleOnly?titleIndex:searchIndex).get(p.id);
+ return terms.every(t=>text.includes(t)||pinyinRank(p,t)>0);
+}
+function pinyinPosition(p,q){
+ const name=titlePinyinIndex.get(p.id),position=name.starts.findIndex(start=>name.full.startsWith(q,start));
+ return position<0?name.initials.indexOf(q):position;
+}
 function compareSearch(a,b,terms,q){
- const rank=p=>{const name=titleIndex.get(p.id);return !q?0:name===q?4:name.includes(q)?3:terms.every(t=>name.includes(t))?2:0;};
- const hits=p=>terms.filter(t=>titleIndex.get(p.id).includes(t)).length;
- return rank(b)-rank(a)||hits(b)-hits(a)||a.sort-b.sort||title(a.name).localeCompare(title(b.name),'zh-CN');
+ const rank=p=>{const name=titleIndex.get(p.id),original=!q?0:name===q?80:name.includes(q)?60:terms.every(t=>name.includes(t))?40:0;
+  return Math.max(original,pinyinRank(p,q),q&&terms.length>1&&terms.every(t=>name.includes(t)||pinyinRank(p,t)>0)?40:0);};
+ const hits=p=>terms.filter(t=>titleIndex.get(p.id).includes(t)||pinyinRank(p,t)>0).length;
+ const priority=rank(b)-rank(a)||hits(b)-hits(a);if(priority)return priority;
+ const py=pinyinQuery(q),pinyinOrder=py&&pinyinRank(a,q)&&pinyinRank(b,q)?pinyinPosition(a,py)-pinyinPosition(b,py)||titlePinyinIndex.get(a.id).starts.length-titlePinyinIndex.get(b.id).starts.length:0;
+ return pinyinOrder||a.sort-b.sort||title(a.name).localeCompare(title(b.name),'zh-CN');
 }
 
 let state={section:'',q:'',group:'',page:1},timer;
@@ -111,7 +142,7 @@ function momentScoreText(p){return Number.isInteger(p.eraScore)?`时代得分 ${
 function momentScorePreview(p){return Number.isInteger(p.eraScore)?`<div class="moment-score">${icon('GLORY_NORMAL_AGE')}<span>时代得分</span><b>${p.eraScore}</b></div>`:'';}
 function preview(p){return momentScorePreview(p)+basePreview(p)+resourceListsPanel(p,true)+(p.regionalPreview?.length?`<div class="ability-preview regional-preview"><b>辐射产出</b>${p.regionalPreview.map(b=>`<p>${rich(b)}</p>`).join('')}</div>`:'');}
 
-function results(){navigation(state.section);document.body.classList.add('detail');const q=state.q.trim().toLowerCase(),terms=q.split(/\s+/).filter(Boolean);let base=listedPages.filter(p=>(!state.section||p.section===state.section)&&terms.every(t=>($('#titleOnly').checked?titleIndex.get(p.id):searchIndex.get(p.id)).includes(t)));const groups=(!q&&sectionMap.get(state.section)?.groups)||[...new Set([...base].sort((a,b)=>a.sort-b.sort).flatMap(pageGroups).filter(Boolean))];if(!q&&state.group&&!groups.includes(state.group))state.group='';if(state.group)base=base.filter(p=>inGroup(p,state.group));base.sort((a,b)=>compareSearch(a,b,terms,q));const size=30,total=Math.max(1,Math.ceil(base.length/size));state.page=Math.max(1,Math.min(total,state.page));rememberList();const selected=base.slice((state.page-1)*size,state.page*size);$('#content').innerHTML=`<div class="section-title"><h2>${esc(q?'搜索结果':title(sectionMap.get(state.section)?.name||'全部条目'))}</h2><span role="status">${base.length} 个条目</span></div>${groups.length?`<div class="group-tabs" role="tablist" aria-label="细分分类">${['',...groups].map(g=>`<button type="button" role="tab" id="group-${groups.indexOf(g)+1}" aria-controls="group-results" aria-selected="${g===state.group}" tabindex="${g===state.group?0:-1}" data-group="${esc(g)}">${g?esc(title(g)):'全部'}</button>`).join('')}</div>`:''}${!q&&sectionMap.get(state.section)?.introduction?`<p class="section-introduction">${esc(sectionMap.get(state.section).introduction)}</p>`:''}<div class="results-grid" id="group-results" role="tabpanel" aria-label="条目列表">${selected.map(p=>`<a class="result" href="${link(p)}"><small>${esc(title(sectionMap.get(p.section)?.name))} ${displayedGroup(p)?' / '+esc(title(displayedGroup(p))):''}</small><h3 class="entity-title">${entityIcon(p)}<span>${rich(p.name)}</span></h3>${preview(p)}</a>`).join('')}</div>${!base.length?'<div class="empty"><h2>没有找到匹配条目</h2><p>试试更短的关键词，或取消「只搜索名称」。</p><a href="#">回到百科首页 →</a></div>':''}${base.length>size?`<div class="pager"><button id="prev" ${state.page===1?'disabled':''}>← 上一页</button><span>${state.page} / ${total}</span><button id="next" ${state.page===total?'disabled':''}>下一页 →</button></div>`:''}`;document.querySelectorAll('.group-tabs [role="tab"]').forEach((tab,i,tabs)=>{function activate(next){state.group=next.dataset.group;state.page=1;results();document.querySelectorAll('.group-tabs [role="tab"]')[Array.from(tabs).indexOf(next)]?.focus();}tab.addEventListener('click',()=>activate(tab));tab.addEventListener('keydown',e=>{let n;if(e.key==='ArrowRight')n=(i+1)%tabs.length;else if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;else if(e.key==='Home')n=0;else if(e.key==='End')n=tabs.length-1;else return;e.preventDefault();activate(tabs[n]);});});$('#prev')?.addEventListener('click',()=>{state.page--;results();window.scrollTo(0,0);});$('#next')?.addEventListener('click',()=>{state.page++;results();window.scrollTo(0,0);});}
+function results(){navigation(state.section);document.body.classList.add('detail');const q=state.q.trim().toLowerCase(),terms=q.split(/\s+/).filter(Boolean);let base=listedPages.filter(p=>(!state.section||p.section===state.section)&&matchesSearch(p,terms,$('#titleOnly').checked));const groups=(!q&&sectionMap.get(state.section)?.groups)||[...new Set([...base].sort((a,b)=>a.sort-b.sort).flatMap(pageGroups).filter(Boolean))];if(!q&&state.group&&!groups.includes(state.group))state.group='';if(state.group)base=base.filter(p=>inGroup(p,state.group));base.sort((a,b)=>compareSearch(a,b,terms,q));const size=30,total=Math.max(1,Math.ceil(base.length/size));state.page=Math.max(1,Math.min(total,state.page));rememberList();const selected=base.slice((state.page-1)*size,state.page*size);$('#content').innerHTML=`<div class="section-title"><h2>${esc(q?'搜索结果':title(sectionMap.get(state.section)?.name||'全部条目'))}</h2><span role="status">${base.length} 个条目</span></div>${groups.length?`<div class="group-tabs" role="tablist" aria-label="细分分类">${['',...groups].map(g=>`<button type="button" role="tab" id="group-${groups.indexOf(g)+1}" aria-controls="group-results" aria-selected="${g===state.group}" tabindex="${g===state.group?0:-1}" data-group="${esc(g)}">${g?esc(title(g)):'全部'}</button>`).join('')}</div>`:''}${!q&&sectionMap.get(state.section)?.introduction?`<p class="section-introduction">${esc(sectionMap.get(state.section).introduction)}</p>`:''}<div class="results-grid" id="group-results" role="tabpanel" aria-label="条目列表">${selected.map(p=>`<a class="result" href="${link(p)}"><small>${esc(title(sectionMap.get(p.section)?.name))} ${displayedGroup(p)?' / '+esc(title(displayedGroup(p))):''}</small><h3 class="entity-title">${entityIcon(p)}<span>${rich(p.name)}</span></h3>${preview(p)}</a>`).join('')}</div>${!base.length?'<div class="empty"><h2>没有找到匹配条目</h2><p>试试更短的关键词，或取消「只搜索名称」。</p><a href="#">回到百科首页 →</a></div>':''}${base.length>size?`<div class="pager"><button id="prev" ${state.page===1?'disabled':''}>← 上一页</button><span>${state.page} / ${total}</span><button id="next" ${state.page===total?'disabled':''}>下一页 →</button></div>`:''}`;document.querySelectorAll('.group-tabs [role="tab"]').forEach((tab,i,tabs)=>{function activate(next){state.group=next.dataset.group;state.page=1;results();document.querySelectorAll('.group-tabs [role="tab"]')[Array.from(tabs).indexOf(next)]?.focus();}tab.addEventListener('click',()=>activate(tab));tab.addEventListener('keydown',e=>{let n;if(e.key==='ArrowRight')n=(i+1)%tabs.length;else if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;else if(e.key==='Home')n=0;else if(e.key==='End')n=tabs.length-1;else return;e.preventDefault();activate(tabs[n]);});});$('#prev')?.addEventListener('click',()=>{state.page--;results();window.scrollTo(0,0);});$('#next')?.addEventListener('click',()=>{state.page++;results();window.scrollTo(0,0);});}
 
 function article(id){const p=byId.get(D.aliases?.[id]||id);document.body.classList.add('detail');if(!p){$('#content').innerHTML='<div class="empty"><h2>条目不存在</h2><a href="#">返回首页</a></div>';return;}navigation(p.section);document.title=title(p.name)+' · 和而不同百科';const description=!p.editorial&&p.description&&!p.description.startsWith('LOC_')?p.description:'';$('#content').innerHTML=`<div class="breadcrumb"><a href="#">百科首页</a><span>/</span><a href="${listRoute(p.section)}">${esc(title(sectionMap.get(p.section)?.name))}</a><span>/</span><span>${esc(title(p.name))}</span></div><div class="article-heading"><div class="eyebrow">${esc(title(p.group)||'CIVILOPEDIA')}</div><h1 class="entity-title">${entityIcon(p)}<span>${rich(p.name)}</span></h1><small>${esc(p.key)}</small></div><div class="article-layout${p.editorial?' no-stat-panel':''}"><div class="article-body">${beliefTypePanel(p)}${description?`<h2>规则说明</h2><p>${rich(description)}</p>`:''}${mechanicsContents(p)}${entryPanels(p)}${boostPanel(p)}${unlockPanel(p)}${variantsPanel(p)}${chapterPanel(p)}${referencesPanel(p)}${!description&&!p.chapters.length?'<p class="note">此条目没有独立文字说明，请查阅基础数据与关联条目。部分信息由游戏运行时生成。</p>':''}${additionalLinks(p).length?`<h2>关联条目</h2><div class="related">${additionalLinks(p).map(l=>`<a href="${link(byId.get(l.id))}"><small>${esc(l.label)}</small>${esc(title(byId.get(l.id).name))} ↗</a>`).join('')}</div>`:''}${!p.editorial?`<details><summary>查看数据来源与原始字段</summary><p>来源：${esc(p.source)} · 本机游戏数据库快照</p><pre>${esc(JSON.stringify(p.raw,null,2))}</pre></details>`:''}</div>${p.editorial?'':`<div class="stat-panel"><h3>${p.stats.length?'基础数据':'阅读提示'}</h3>${p.stats.map(([k,v])=>`<div class="stat"><span>${rich(k)}</span><b>${rich(v)}</b></div>`).join('')}${!p.editorial?`<p>${p.stats.length?'这里展示数据库基础值。实际造价与效果受游戏速度、文明能力、政策和当前地图影响。':'本文保留游戏百科的章节顺序。可用顶部搜索框继续查找相关规则。'}</p><p>${p.reviewed?'核对日期<br>'+esc(p.reviewed):'快照日期<br>2026 年 10 月 15 日'}</p>`:''}</div>`}</div>`;$('#variantSearch')?.addEventListener('input',e=>{const q=e.target.value.toLowerCase().trim();document.querySelectorAll('.variant').forEach(v=>v.hidden=!v.dataset.search.includes(q));});}
 
@@ -119,7 +150,7 @@ function render(){const params=new URLSearchParams(location.hash.slice(1));state
 
 $('#search').addEventListener('input',e=>{clearTimeout(timer);timer=setTimeout(()=>{state.q=e.target.value;state.section='';state.group='';state.page=1;history.replaceState(null,'',route({...state.section?{section:state.section}:{},...state.q?{q:state.q}:{}}));if(!state.section&&!state.q)home();else results();},120);});
 
-$('#titleOnly').addEventListener('change',()=>{state.page=1;if(state.q||state.section)results();});window.addEventListener('hashchange',()=>{clearTimeout(timer);render();window.scrollTo(0,0);});document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('#search').focus();}});$('#total').textContent=`${listedPages.length.toLocaleString()} 条知识 · 标题优先，不搜索历史背景`;render();
+$('#titleOnly').addEventListener('change',()=>{state.page=1;if(state.q||state.section)results();});window.addEventListener('hashchange',()=>{clearTimeout(timer);render();window.scrollTo(0,0);});document.addEventListener('keydown',e=>{if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('#search').focus();}});$('#total').textContent=`${listedPages.length.toLocaleString()} 条知识 · 标题优先 · 支持拼音/首字母 · 不搜索历史背景`;render();
 
 
 
@@ -175,3 +206,30 @@ document.addEventListener('mousemove',e=>{const a=previewTarget(e);if(a)hoverPoi
 
 // In-page reading navigation must not replace the encyclopedia's hash route.
 document.addEventListener('click',e=>{const button=e.target.closest('.article-toc [data-scroll-target]');if(button)document.getElementById(button.dataset.scrollTarget)?.scrollIntoView({behavior:'smooth',block:'start'});});
+
+/*
+Pinyin data generated from pypinyin 0.55.0.
+https://github.com/mozillazg/python-pinyin
+
+The MIT License (MIT)
+
+Copyright (c) 2016 mozillazg, 闲耘 <hotoo.cn@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/

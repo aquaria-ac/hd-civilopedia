@@ -68,7 +68,9 @@ function pageGroups(p){return [...new Set(p.groups?.length?p.groups:p.group?[p.g
 function inGroup(p,group){return !group||pageGroups(p).includes(group);}
 function displayedGroup(p){return state.group&&inGroup(p,state.group)?state.group:p.group;}
 
-const symbols={"CONCEPTS":"⌂","CIVILIZATIONS":"◇","CITYSTATES":"♜","DISTRICTS":"▥","BUILDINGS":"▤","WONDERS":"♙","PROJECTS":"⚔","UNITS":"✧","UNITPROMOTIONS":"✦","GREATPEOPLE":"⌘","CORPORATIONS":"❧","TECHNOLOGIES":"⚑","CIVICS":"☼","GOVERNMENTS":"△","RELIGIONS":"◈","FEATURES":"⌑","RESOURCES":"♧","IMPROVEMENTS":"◷","GOVERNORS":"◉","MOMENTS":"▧","MECHANICS":"⚙"};
+function sectionIcon(section, className) {
+ return `<img class="${className}" src="${esc(section.icon)}" alt="">`;
+}
 
 const listedPages=D.pages.filter(p=>p.listed!==false);
 const counts=Object.fromEntries(D.sections.map(s=>[s.id,listedPages.filter(p=>p.section===s.id).length]));
@@ -130,11 +132,11 @@ function listRoute(section){return savedLists[section]||route({section});}
 function rememberList(){const params={...state.section?{section:state.section}:{},...state.q?{q:state.q}:{},...state.group?{group:state.group}:{},...state.page>1?{page:state.page}:{},...$('#titleOnly').checked?{titleOnly:'1'}:{}};const url=route(params);history.replaceState(null,'',url);savedLists[state.section]=url;try{sessionStorage.setItem('pedia-list-state',JSON.stringify(savedLists));}catch{}}
 function link(p){return route({entry:p.id});}
 
-function navigation(active=''){ $('#categories').innerHTML=`<a href="#" class="${!active?'active':''}"><span class="nav-icon">⌂</span>百科首页</a>`+D.sections.map((s,i)=>`<a href="${listRoute(s.id)}" class="${active===s.id?'active':''}"><span class="nav-icon">${symbols[s.id]||'◇'}</span>${esc(title(s.name))}<small>${counts[s.id]}</small></a>`).join('');}
+function navigation(active=''){ $('#categories').innerHTML=`<a href="#" class="${!active?'active':''}"><img class="nav-icon" src="inline-icons/HOUSING.png" alt="">百科首页</a>`+D.sections.map((s,i)=>`<a href="${listRoute(s.id)}" class="${active===s.id?'active':''}">${sectionIcon(s, 'nav-icon')}${esc(title(s.name))}<small>${counts[s.id]}</small></a>`).join('');}
 
 function guide(p,i){const desc=['认识设计理念与新增内容','产出、区域与伟人体系','收获、劫掠与发展成本','人口、住房与城市经营','时代进程与得分机制'][i];return `<a class="guide" href="${link(p)}"><span class="number">0${i+1} / HARMONY</span><span class="arrow">↗</span><b>${esc(title(p.name))}</b><p>${desc}</p></a>`;}
 
-function home(){navigation();document.body.classList.remove('detail');$('#content').innerHTML=`<div class="section-title"><h2>先读懂和而不同</h2><span>特色规则 · 从这里开始</span></div><div class="guide-grid">${D.pages.filter(p=>p.hd).sort((a,b)=>a.sort-b.sort).map(guide).join('')}</div><div class="section-title"><h2>探索百科</h2><span>${D.sections.length} 个分类 / ${listedPages.length.toLocaleString()} 个条目</span></div><div class="category-grid">${D.sections.map((s,i)=>`<a class="category-tile" href="${listRoute(s.id)}"><span class="tile-icon">${symbols[s.id]||'◇'}</span><span><b>${esc(title(s.name))}</b><small>${counts[s.id]} 个条目</small></span><em>↗</em></a>`).join('')}</div><p class="note">当前版本包含本机已加载的和而不同及配套模组。规则与数值随模组组合变化。</p>`;}
+function home(){navigation();document.body.classList.remove('detail');$('#content').innerHTML=`<div class="section-title"><h2>先读懂和而不同</h2><span>特色规则 · 从这里开始</span></div><div class="guide-grid">${D.pages.filter(p=>p.hd).sort((a,b)=>a.sort-b.sort).map(guide).join('')}</div><div class="section-title"><h2>探索百科</h2><span>${D.sections.length} 个分类 / ${listedPages.length.toLocaleString()} 个条目</span></div><div class="category-grid">${D.sections.map((s,i)=>`<a class="category-tile" href="${listRoute(s.id)}">${sectionIcon(s, 'tile-icon')}<span><b>${esc(title(s.name))}</b><small>${counts[s.id]} 个条目</small></span><em>↗</em></a>`).join('')}</div><p class="note">当前版本包含本机已加载的和而不同及配套模组。规则与数值随模组组合变化。</p>`;}
 
 function basePreview(p){return p.preview?.length?`<div class="ability-preview">${p.preview.map(c=>`<div><b>${rich(c.title)}</b>${c.body.map(b=>`<p>${rich(b)}</p>`).join('')}</div>`).join('')}</div>`:`<p>${rich(p.description||p.chapters[0]?.body[0]||'查看基础数据与关联条目')}</p>`;}
 

@@ -5,7 +5,7 @@ header{height:auto;min-height:96px;margin:16px auto 0;max-width:1580px;padding:1
 .brand{font-family:'SimSun',serif;color:#f1dfad;text-shadow:0 2px 2px #000;letter-spacing:4px}.brand small{color:#bda77f}.seal{background:transparent url('legacy/css/launchbar_hook_button.png') 0 0/51px 356px no-repeat;width:51px;height:51px;border-radius:0;color:#e2c582;font:30px 'SimSun',serif;text-shadow:0 2px 3px #000}.header-right,.edition{color:#c9b48e}.version-link{color:#e8d6aa}
 .workspace{max-width:1580px;grid-template-columns:250px minmax(0,1fr);margin:8px auto 32px;border:26px solid transparent;border-image:url('legacy/css/controls_windowtitle.png') 165 fill stretch;background:#381013;box-shadow:0 12px 30px #3b271e35}
 aside{border:0;padding:20px 7px;background:#381013;color:#d8c8a6;height:calc(100vh - 10px)}.side-heading,.side-foot{color:#c0aa83}.side-heading{margin-left:15px}.side-foot small{color:#b2a080}.status-dot{background:#cfb66c}
-nav{gap:3px}nav a,nav a:hover,nav a.active{border:11px solid transparent;border-image:url('legacy/css/controls_buttoncontrol_brown_normal.png') 33 fill stretch;border-radius:0;background:none;color:#dbc8a1;padding:0 1px;min-height:49px;gap:7px;font-size:12px}nav a:hover{border-image-source:url('legacy/css/controls_buttoncontrol_brown_hover.png');color:#fff0c6}nav a.active{border-image-source:url('legacy/css/controls_buttoncontrol_brown_selected.png');color:#ffedb8;text-shadow:0 1px 2px #000}nav small{color:#d6bc81;opacity:1}.nav-icon{flex:0 0 27px;width:27px;height:27px;background-size:contain;background-repeat:no-repeat;background-position:center;opacity:1}nav a:not([href*='section=']) .nav-icon{color:#dfc27c}
+nav{gap:3px}nav a,nav a:hover,nav a.active{border:11px solid transparent;border-image:url('legacy/css/controls_buttoncontrol_brown_normal.png') 33 fill stretch;border-radius:0;background:none;color:#dbc8a1;padding:0 1px;min-height:49px;gap:7px;font-size:12px}nav a:hover{border-image-source:url('legacy/css/controls_buttoncontrol_brown_hover.png');color:#fff0c6}nav a.active{border-image-source:url('legacy/css/controls_buttoncontrol_brown_selected.png');color:#ffedb8;text-shadow:0 1px 2px #000}nav small{color:#d6bc81;opacity:1}.nav-icon{flex:0 0 27px;width:27px;height:27px;background-size:contain;background-repeat:no-repeat;background-position:center;opacity:1}
 main{background:#e8d9b7 url('legacy/css/parchment_patternbright.png') repeat;background-size:256px 256px;border:16px solid transparent;border-image:url('legacy/css/pageframe.png') 48 fill stretch;padding:26px 30px 22px}body.detail main{padding-top:22px}
 .intro{padding:8px 8px 24px}.eyebrow{color:#876d3f}.intro h1{color:#46331e}.intro h1 span{color:#8e602a}.intro p{color:#715e40}.intro-lines{border:0;border-radius:0;background:url('legacy/css/compass.png') center/contain no-repeat;transform:none;opacity:.75;width:210px;height:190px;top:25px;right:20px}.intro-lines::before,.intro-lines::after{display:none}.intro-lines span{opacity:0}
 button,.pager button{border:11px solid transparent;border-image:url('legacy/css/controls_buttoncontrol_brown_normal.png') 33 fill stretch;border-radius:0;background:none;color:#ebd7ab;padding:0 10px;min-height:40px}button:hover,.pager button:hover{border-image-source:url('legacy/css/controls_buttoncontrol_brown_hover.png');background:none;color:#ffefc7}button:disabled{filter:grayscale(.7)}
@@ -22,26 +22,26 @@ dialog{border:24px solid transparent;border-image:url('legacy/css/pageframe.png'
 @media(max-width:1100px){.workspace{grid-template-columns:210px minmax(0,1fr);border-width:17px;margin:6px 8px 20px}header{margin:8px 8px 0;border-width:17px;padding:8px 18px}main{padding:22px 20px;border-width:12px}nav a{font-size:11px;gap:4px}.intro-lines{right:5px;width:140px;opacity:.4}.stat-panel .stat{width:48%;padding-right:12px}}
 @media(max-width:760px){header{padding:5px 10px;border-width:12px;min-height:82px}.workspace{display:block;border-width:12px;margin:6px 6px 16px}.brand{font-size:20px;gap:8px}.header-right{gap:8px}aside{height:auto;position:static;padding:4px;background:#381013}nav{gap:2px;overflow:auto;flex-direction:row}nav a{white-space:nowrap;min-height:42px;flex:0 0 auto;padding:0 5px;border-width:9px}nav .nav-icon{display:block;flex-basis:22px;width:22px;height:22px}.side-heading,.side-foot{display:none}main{padding:18px 14px;border-width:10px}.section-title{border-width:12px 25px;gap:8px}.section-title h2{font-size:18px}.section-title span{font-size:10px}.article-heading{min-height:105px;padding:12px 10px}.article-heading h1{font-size:27px}.article-body h2{border-width:16px 32px;font-size:18px}.intro-lines{opacity:.25}.stat-panel{padding:8px;border-width:10px}.guide,.result,.category-tile{border-width:9px;padding:12px}.header-right button{font-size:11px}footer{flex-direction:column;gap:6px}#entryPreview{border-width:15px;padding:9px}}
 @media(max-width:440px){.workspace{border-width:8px;margin:4px}.brand small{font-size:8px;letter-spacing:1px}.seal{display:none}.header-right{gap:4px}.version-link{font-size:10px}.search-box{padding:4px;border-width:8px}.category-tile{padding:8px;gap:8px}.tile-icon{width:30px;height:30px;flex-basis:30px;background-size:28px}.section-title{border-left-width:18px;border-right-width:18px}.stat-panel .stat{width:100%}}
-#categories a[href="#section=CONCEPTS"] .nav-icon,.category-tile[href="#section=CONCEPTS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_CONCEPTS.png")}
-#categories a[href="#section=CIVILIZATIONS"] .nav-icon,.category-tile[href="#section=CIVILIZATIONS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_CIVILIZATIONS.png")}
-#categories a[href="#section=CITYSTATES"] .nav-icon,.category-tile[href="#section=CITYSTATES"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_CITYSTATES.png")}
-#categories a[href="#section=DISTRICTS"] .nav-icon,.category-tile[href="#section=DISTRICTS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_DISTRICTS.png")}
-#categories a[href="#section=BUILDINGS"] .nav-icon,.category-tile[href="#section=BUILDINGS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_BUILDINGS.png")}
-#categories a[href="#section=WONDERS"] .nav-icon,.category-tile[href="#section=WONDERS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_WONDERS.png")}
-#categories a[href="#section=PROJECTS"] .nav-icon,.category-tile[href="#section=PROJECTS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_WONDERS.png")}
-#categories a[href="#section=UNITS"] .nav-icon,.category-tile[href="#section=UNITS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_UNITS.png")}
-#categories a[href="#section=UNITPROMOTIONS"] .nav-icon,.category-tile[href="#section=UNITPROMOTIONS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_UNITPROMOTIONS.png")}
-#categories a[href="#section=GREATPEOPLE"] .nav-icon,.category-tile[href="#section=GREATPEOPLE"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_GREATPEOPLE.png")}
-#categories a[href="#section=CORPORATIONS"] .nav-icon,.category-tile[href="#section=CORPORATIONS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_GREATPEOPLE.png")}
-#categories a[href="#section=TECHNOLOGIES"] .nav-icon,.category-tile[href="#section=TECHNOLOGIES"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_TECHNOLOGIES.png")}
-#categories a[href="#section=CIVICS"] .nav-icon,.category-tile[href="#section=CIVICS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_CIVICS.png")}
-#categories a[href="#section=GOVERNMENTS"] .nav-icon,.category-tile[href="#section=GOVERNMENTS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_GOVERNMENTS.png")}
-#categories a[href="#section=RELIGIONS"] .nav-icon,.category-tile[href="#section=RELIGIONS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_RELIGIONS.png")}
-#categories a[href="#section=FEATURES"] .nav-icon,.category-tile[href="#section=FEATURES"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_FEATURES.png")}
-#categories a[href="#section=RESOURCES"] .nav-icon,.category-tile[href="#section=RESOURCES"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_RESOURCES.png")}
-#categories a[href="#section=IMPROVEMENTS"] .nav-icon,.category-tile[href="#section=IMPROVEMENTS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_IMPROVEMENTS.png")}
-#categories a[href="#section=GOVERNORS"] .nav-icon,.category-tile[href="#section=GOVERNORS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_GOVERNORS.png")}
-#categories a[href="#section=MOMENTS"] .nav-icon,.category-tile[href="#section=MOMENTS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_HISTORIC_MOMENTS.png")}/* Second-level category tabs retain the legacy button artwork. */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Second-level category tabs retain the legacy button artwork. */
 .group-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px;padding-bottom:14px;border-bottom:1px solid #ad9161}
 .group-tabs button{font-size:12px;min-height:40px;padding:2px 9px;white-space:normal;text-align:center}
 .group-tabs button[aria-selected="true"]{border-image-source:url('legacy/css/controls_buttoncontrol_brown_selected.png');color:#fff0c3;text-shadow:0 1px 2px #000;box-shadow:0 2px 0 #9a753b}
@@ -56,7 +56,7 @@ dialog{border:24px solid transparent;border-image:url('legacy/css/pageframe.png'
 #entryPreview .resource-members h3,#entryPreview .economy-effect h3{color:#e5ca91}#entryPreview .resource-chip{background:#182f40;border-color:#806c42;color:#e5c995}#entryPreview .economy-effect h3 a{color:#e5ca91}#entryPreview .economy-table thead,#entryPreview .economy-table tbody th{background:#20384a;color:#e5ca91}#entryPreview .economy-table td{background:#122b3d}#entryPreview .economy-table p{color:#e0d4ba}#entryPreview .economy-note{font-size:12px;color:#bda67c}#entryPreview .economy-table{font-size:12px;min-width:390px}
 @media(max-width:760px){.economy-table th,.economy-table td{padding:8px}.resource-chip{padding:4px 7px}.economy-effect h3{font-size:16px}}
 .economy-table{table-layout:fixed}.economy-table th:first-child{width:90px}.economy-table tbody th{white-space:nowrap}
-#categories a[href^="#section=MECHANICS"] .nav-icon,.category-tile[href^="#section=MECHANICS"] .tile-icon{font-size:0;background-image:url("legacy/icons/ICON_CIVILOPEDIA_CONCEPTS.png")}
+
 .article-toc{display:block;margin:22px 0 30px;padding:18px 20px;border:1px solid #b59a6b;background:#e6d5b1}.article-toc>b{display:block;color:#604521;margin-bottom:10px}.article-toc>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 15px}.article-toc button{display:block;border:0;border-image:none;background:transparent;min-height:36px;padding:5px 0;text-align:left;color:#65461f;font-size:13px;line-height:1.7;box-shadow:none}.article-toc button:hover{border-image:none;background:transparent;color:#2f2315;text-decoration:underline}.mechanics-chapter{scroll-margin-top:20px}.mechanics-formula{margin:18px 0;padding:18px 20px;border-left:4px solid #9a743a;background:#dbc49a;color:#3e2d17;font:600 16px/1.9 Consolas,'Microsoft YaHei',sans-serif;overflow-wrap:anywhere}.mechanics-table-wrap{margin:20px 0;overflow-x:auto}.mechanics-table{width:100%;border-collapse:collapse;min-width:430px;font-size:13px;line-height:1.8}.mechanics-table th,.mechanics-table td{border:1px solid #b39b73;padding:10px 12px;text-align:left;vertical-align:top}.mechanics-table thead th{background:#d5bc8e;color:#4e371c}.mechanics-table tbody th{background:#dfcba6;font-weight:500;color:#554027}.mechanics-table td{background:#eadcbd;color:#463d2d}.article-body .mechanics-caption,.article-body .mechanics-citations{font-size:12px;line-height:1.85;color:#7a6444}.mechanics-references a{color:#68451d;border-bottom:1px solid #b79a65}.mechanics-references small{font-size:12px;line-height:1.8;color:#806c4f}#entryPreview .mechanics-table td{background:#132d3f;color:#e0d4ba}#entryPreview .mechanics-table th{background:#213a4d;color:#e5ca91}#entryPreview .mechanics-formula{background:#183448;border-color:#9a8151;color:#eed9ad}#entryPreview .mechanics-references a{color:#e5ca91}
 @media(max-width:760px){.article-toc{padding:12px 14px}.article-toc>div{grid-template-columns:1fr}.article-toc button{font-size:13px}.mechanics-formula{font-size:14px;padding:13px 15px}.mechanics-table th,.mechanics-table td{padding:8px}}
 
@@ -85,3 +85,5 @@ dialog{border:24px solid transparent;border-image:url('legacy/css/pageframe.png'
 .result .moment-score{display:flex;align-items:center;gap:6px;width:fit-content;margin:8px 0 10px;padding:3px 9px;border:1px solid #b79e70;border-radius:3px;background:rgba(225,206,162,.4);color:#58401d;font-size:13px;line-height:1.7}
 .result .moment-score .game-icon{width:20px;height:20px}
 .result .moment-score b{margin-left:5px;color:#543810;font-size:16px;font-variant-numeric:tabular-nums}
+
+.nav-icon,.tile-icon{object-fit:contain}.category-tile .tile-icon{padding:4px}

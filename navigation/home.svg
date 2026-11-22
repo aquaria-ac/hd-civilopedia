@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="wall" x1="0" x2=".7" y1="0" y2="1">
+      <stop stop-color="#ffedbc"/>
+      <stop offset=".44" stop-color="#e7c287"/>
+      <stop offset="1" stop-color="#a27c4a"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0" x2=".85" y1="0" y2="1">
+      <stop stop-color="#fff1c1"/>
+      <stop offset=".52" stop-color="#eac68c"/>
+      <stop offset="1" stop-color="#b18b53"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#wall)" stroke="#83633c" stroke-width=".6" stroke-linejoin="round"
+        d="M6.5 15.9 16 8.1l9.5 7.8V28H19v-9h-6v9H6.5Z"/>
+  <path fill="#8f6b40" d="m6.8 16 9.2-7.5 9.2 7.5v1.7L16 10.3l-9.2 7.4Z"/>
+  <path fill="url(#roof)" stroke="#886940" stroke-width=".6" stroke-linejoin="round"
+        d="M2.4 14.4 16 3.4l13.6 11-2.2 2.8L16 8 4.6 17.2Z"/>
+  <path fill="none" stroke="#ffe9b4" stroke-width=".7" stroke-linecap="round"
+        d="M3.5 14.3 16 4.2l12.5 10.1"/>
+</svg>

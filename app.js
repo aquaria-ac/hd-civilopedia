@@ -132,7 +132,7 @@ function listRoute(section){return savedLists[section]||route({section});}
 function rememberList(){const params={...state.section?{section:state.section}:{},...state.q?{q:state.q}:{},...state.group?{group:state.group}:{},...state.page>1?{page:state.page}:{},...$('#titleOnly').checked?{titleOnly:'1'}:{}};const url=route(params);history.replaceState(null,'',url);savedLists[state.section]=url;try{sessionStorage.setItem('pedia-list-state',JSON.stringify(savedLists));}catch{}}
 function link(p){return route({entry:p.id});}
 
-function navigation(active=''){ $('#categories').innerHTML=`<a href="#" class="${!active?'active':''}"><img class="nav-icon" src="inline-icons/HOUSING.png" alt="">百科首页</a>`+D.sections.map((s,i)=>`<a href="${listRoute(s.id)}" class="${active===s.id?'active':''}">${sectionIcon(s, 'nav-icon')}${esc(title(s.name))}<small>${counts[s.id]}</small></a>`).join('');}
+function navigation(active=''){ $('#categories').innerHTML=`<a href="#" class="${!active?'active':''}"><img class="nav-icon" src="navigation/home.png" alt="">百科首页</a>`+D.sections.map((s,i)=>`<a href="${listRoute(s.id)}" class="${active===s.id?'active':''}">${sectionIcon(s, 'nav-icon')}${esc(title(s.name))}<small>${counts[s.id]}</small></a>`).join('');}
 
 function guide(p,i){const desc=['认识设计理念与新增内容','产出、区域与伟人体系','收获、劫掠与发展成本','人口、住房与城市经营','时代进程与得分机制'][i];return `<a class="guide" href="${link(p)}"><span class="number">0${i+1} / HARMONY</span><span class="arrow">↗</span><b>${esc(title(p.name))}</b><p>${desc}</p></a>`;}
 
